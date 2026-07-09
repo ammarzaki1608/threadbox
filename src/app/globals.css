@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+:root {
+  /* Base */
+  --bg-black: #0a0a0a;
+  --bg-white: #fafaf7;
+  --ink: #141414;
+
+  /* Merdeka collection accent */
+  --merdeka-red: #cc1f2e;
+  --merdeka-gold: #f2c230;
+  --merdeka-navy: #1b2e5c;
+  --merdeka-cream: #f0e6d2;
+
+  /* Penang collection accent */
+  --penang-teal: #1e7a8c;
+  --penang-cream: #f3e9d2;
+  --penang-red: #b8352e;
+
+  /* Balik Pulau (football collab) accent */
+  --bp-cobalt: #16386b;
+  --bp-gold: #f0b429;
+}
+
+@theme inline {
+  --color-bg-black: var(--bg-black);
+  --color-bg-white: var(--bg-white);
+  --color-ink: var(--ink);
+
+  --color-merdeka-red: var(--merdeka-red);
+  --color-merdeka-gold: var(--merdeka-gold);
+  --color-merdeka-navy: var(--merdeka-navy);
+  --color-merdeka-cream: var(--merdeka-cream);
+
+  --color-penang-teal: var(--penang-teal);
+  --color-penang-cream: var(--penang-cream);
+  --color-penang-red: var(--penang-red);
+
+  --color-bp-cobalt: var(--bp-cobalt);
+  --color-bp-gold: var(--bp-gold);
+
+  --font-display: var(--font-anton);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--bg-black);
+  color: var(--bg-white);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
