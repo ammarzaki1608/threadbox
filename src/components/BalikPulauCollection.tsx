@@ -1,7 +1,6 @@
-import CollectionSection from "./CollectionSection";
-import ProductCard from "./ProductCard";
-import { watermarkForProduct } from "./watermarks";
-import { COLLECTIONS, getProductsByCollection } from "@/lib/products";
+import CollectionFeature from "./CollectionFeature";
+import { CrestWatermark } from "./watermarks";
+import { COLLECTIONS, getFlagshipProduct } from "@/lib/products";
 
 /** Literal street-sign lockup, in-palette rather than real-world road green. */
 function RoadSign() {
@@ -18,30 +17,15 @@ function RoadSign() {
 }
 
 const collection = COLLECTIONS["balik-pulau"];
-const products = getProductsByCollection("balik-pulau");
+const product = getFlagshipProduct("balik-pulau");
 
 export default function BalikPulauCollection() {
   return (
-    <CollectionSection
-      id="balik-pulau"
-      eyebrow={collection.eyebrow}
-      title={collection.title}
-      tagline={collection.tagline}
-      accentText={collection.accentText}
-      accentBorder={collection.accentBorder}
+    <CollectionFeature
+      collection={collection}
+      product={product}
+      watermark={<CrestWatermark />}
       badge={<RoadSign />}
-      columns={collection.columns}
-    >
-      {products.map((product) => (
-        <ProductCard
-          key={product.slug}
-          product={product}
-          wash={collection.wash}
-          accentText={collection.priceAccent}
-          cardBorderClasses={collection.cardBorderClasses}
-          watermark={watermarkForProduct(product.collection, product.variant)}
-        />
-      ))}
-    </CollectionSection>
+    />
   );
 }

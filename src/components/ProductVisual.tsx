@@ -30,6 +30,7 @@ export default function ProductVisual({
               backgroundSize: "6px 6px",
             }}
           />
+          {watermark}
           <span
             className="absolute bottom-3 left-3 font-mono text-[9px] tracking-wide text-bg-white/30"
             aria-hidden="true"

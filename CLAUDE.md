@@ -50,8 +50,17 @@ back-print is the hero graphic, front chest logo stays small and monochrome
   /* Balik Pulau (football collab) accent */
   --bp-cobalt: #16386B;
   --bp-gold: #F0B429;
+
+  /* Hostel collection accent — community drop, not part of the geography tier system */
+  --hostel-charcoal: #2B2420;
+  --hostel-amber: #E8952F;
+  --hostel-cream: #F1E4CE;
 }
 ```
+
+**Note on Merdeka vs. Malaysia:** "Malaysia" is the Tier 0 collection; "Merdeka" is its first flagship design (Tanah Tumpah Darahku), not the collection name — the `merdeka-*` tokens are kept as-is since they're that specific design's palette, not a collection identifier.
+
+**Note on Hostel:** doesn't map to the Malaysia → State → District → Landmark → Culture → Food → Festival tier ladder — it's a separate community/affiliation collection (general hostel-life nostalgia, not tied to one school). Labeled "Community" rather than forced into a fake tier number.
 Do not blend these into one "brand palette" for the whole site — the site should shift accent per collection section, the way the physical drops do. A homepage that uses all five accents evenly will look like a rainbow sampler, not a brand.
 
 ### Type

@@ -1,4 +1,6 @@
-/** Shophouse/clock-tower skyline — sits low in the negative space of Penang's stacked-type card. */
+import type { CollectionSlug } from "@/lib/products";
+
+/** Shophouse/clock-tower skyline — sits low in the negative space of Penang's product visual. */
 export function SkylineWatermark() {
   return (
     <svg
@@ -44,9 +46,9 @@ export function CrestWatermark() {
   );
 }
 
-/** Picks the right decorative watermark for a product, or none for poster-variant SKUs. */
-export function watermarkForProduct(collection: "merdeka" | "penang" | "balik-pulau", variant: string) {
-  if (collection === "penang" && variant === "stacked-type") return <SkylineWatermark />;
+/** Picks the right decorative watermark for a product, or none for collections without one. */
+export function watermarkForProduct(collection: CollectionSlug, variant: string) {
+  if (collection === "penang") return <SkylineWatermark />;
   if (collection === "balik-pulau" && variant === "collage") return <CrestWatermark />;
   return undefined;
 }

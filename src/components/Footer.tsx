@@ -2,9 +2,10 @@ import Link from "next/link";
 import Wordmark from "./Wordmark";
 
 const LINKS = [
-  { label: "Merdeka", href: "/#merdeka" },
+  { label: "Malaysia", href: "/#malaysia" },
   { label: "Penang", href: "/#penang" },
   { label: "Balik Pulau", href: "/#balik-pulau" },
+  { label: "Hostel", href: "/#hostel" },
 ];
 
 export default function Footer() {
@@ -31,7 +32,7 @@ export default function Footer() {
 
           {/* Woven-tag easter egg — collection/era code, mirrors the neck-label detail on garment. */}
           <span className="self-start border border-bg-white/20 px-3 py-1 font-mono text-[10px] tracking-[0.2em] text-bg-white/40 uppercase">
-            TB · MY · T0–T2 · 2026
+            TB · MY · T0–T2 + HSTL · 2026
           </span>
         </div>
 

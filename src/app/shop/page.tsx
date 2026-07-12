@@ -8,9 +8,10 @@ import { COLLECTIONS, PRODUCTS, type CollectionSlug } from "@/lib/products";
 
 const TIERS: { label: string; value: CollectionSlug | "all" }[] = [
   { label: "All", value: "all" },
-  { label: "Merdeka", value: "merdeka" },
+  { label: "Malaysia", value: "malaysia" },
   { label: "Penang", value: "penang" },
   { label: "Balik Pulau", value: "balik-pulau" },
+  { label: "Hostel", value: "hostel" },
 ];
 
 const SIZES = ["S", "M", "L", "XL"];

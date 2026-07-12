@@ -20,6 +20,11 @@
   /* Balik Pulau (football collab) accent */
   --bp-cobalt: #16386b;
   --bp-gold: #f0b429;
+
+  /* Hostel collection accent — dorm-corridor-lamp warmth */
+  --hostel-charcoal: #2b2420;
+  --hostel-amber: #e8952f;
+  --hostel-cream: #f1e4ce;
 }
 
 @theme inline {
@@ -38,6 +43,10 @@
 
   --color-bp-cobalt: var(--bp-cobalt);
   --color-bp-gold: var(--bp-gold);
+
+  --color-hostel-charcoal: var(--hostel-charcoal);
+  --color-hostel-amber: var(--hostel-amber);
+  --color-hostel-cream: var(--hostel-cream);
 
   --font-display: var(--font-anton);
   --font-sans: var(--font-inter);

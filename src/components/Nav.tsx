@@ -7,9 +7,10 @@ import { useCart } from "@/lib/cart-context";
 
 const LINKS = [
   { label: "Shop", href: "/shop" },
-  { label: "Merdeka", href: "/#merdeka" },
+  { label: "Malaysia", href: "/#malaysia" },
   { label: "Penang", href: "/#penang" },
   { label: "Balik Pulau", href: "/#balik-pulau" },
+  { label: "Hostel", href: "/#hostel" },
 ];
 
 export default function Nav() {

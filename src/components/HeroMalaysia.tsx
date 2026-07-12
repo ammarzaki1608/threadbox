@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import Wordmark from "./Wordmark";
+import { getFlagshipProduct, formatPrice } from "@/lib/products";
 
 /** Moon + star — the one national motif the Brand Bible clears for broad use. */
 function MoonStar({ className = "" }: { className?: string }) {
@@ -19,7 +21,9 @@ function MoonStar({ className = "" }: { className?: string }) {
   );
 }
 
-export default function HeroMerdeka() {
+const product = getFlagshipProduct("malaysia");
+
+export default function HeroMalaysia() {
   const sectionRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(
@@ -68,7 +72,7 @@ export default function HeroMerdeka() {
 
   return (
     <section
-      id="merdeka"
+      id="malaysia"
       ref={sectionRef}
       className="relative"
       style={{ height: reducedMotion ? "100vh" : "220vh" }}
@@ -118,7 +122,7 @@ export default function HeroMerdeka() {
 
             <div
               className="relative flex flex-col items-center gap-8 px-6 text-center"
-              style={{ opacity: backOpacity }}
+              style={{ opacity: backOpacity, pointerEvents: backOpacity > 0.5 ? "auto" : "none" }}
             >
               <MoonStar className="h-20 w-20 text-merdeka-gold sm:h-28 sm:w-28" />
               <div className="flex flex-col items-center gap-3">
@@ -132,10 +136,16 @@ export default function HeroMerdeka() {
                   Tanah Tumpah Darahku
                 </p>
               </div>
+              <Link
+                href={`/product/${product.slug}`}
+                className="border border-bg-white/40 px-5 py-2 font-sans text-xs tracking-[0.2em] text-bg-white uppercase transition-colors hover:bg-bg-white/10"
+              >
+                Shop this piece — {formatPrice(product.price)}
+              </Link>
             </div>
 
             <span className="absolute bottom-4 left-4 font-mono text-[10px] tracking-wide text-bg-white/25">
-              REPLACE: /assets/merdeka-back-print.jpg
+              REPLACE: /assets/{product.slug}.jpg
             </span>
           </div>
         </div>
