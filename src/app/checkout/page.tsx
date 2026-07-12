@@ -4,7 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
 import { COLLECTIONS, getProductBySlug, formatPrice } from "@/lib/products";
-import { ORDER_WHATSAPP_NUMBER, ORDER_EMAIL } from "@/lib/config";
+import {
+  ORDER_WHATSAPP_NUMBER,
+  ORDER_EMAIL,
+  BANK_NAME,
+  BANK_ACCOUNT_NUMBER,
+  BANK_ACCOUNT_HOLDER,
+} from "@/lib/config";
 import ProductVisual from "@/components/ProductVisual";
 import { watermarkForProduct } from "@/components/watermarks";
 
@@ -83,6 +89,8 @@ export default function CheckoutPage() {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, boolean>>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [confirmedTotal, setConfirmedTotal] = useState(0);
+  const [copied, setCopied] = useState(false);
 
   const validate = () => {
     const nextErrors: Partial<Record<keyof FormState, boolean>> = {};
@@ -101,6 +109,7 @@ export default function CheckoutPage() {
       "_blank"
     );
     submitOrderToSheet(items, subtotal, form);
+    setConfirmedTotal(subtotal);
     clear();
     setSubmitted(true);
   };
@@ -111,23 +120,74 @@ export default function CheckoutPage() {
     const subject = `THREADBOX order — ${form.name}`;
     window.location.href = `mailto:${ORDER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
     submitOrderToSheet(items, subtotal, form);
+    setConfirmedTotal(subtotal);
     clear();
     setSubmitted(true);
   };
 
+  const copyAccountNumber = () => {
+    navigator.clipboard
+      .writeText(BANK_ACCOUNT_NUMBER)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => {
+        // Clipboard permission denied/unavailable — the number is still shown on screen to copy manually.
+      });
+  };
+
   if (submitted) {
     return (
-      <main className="mx-auto flex max-w-xl flex-1 flex-col items-center justify-center gap-4 px-6 pt-28 pb-24 text-center sm:pt-32">
+      <main className="mx-auto flex max-w-xl flex-1 flex-col items-center justify-center gap-6 px-6 pt-28 pb-24 text-center sm:pt-32">
         <h1 className="font-display text-3xl uppercase text-bg-white sm:text-4xl">
           Order sent
         </h1>
         <p className="font-sans text-sm leading-relaxed text-bg-white/60">
-          We&apos;ll confirm sizing, delivery, and payment with you directly. Limited runs — we
-          hold your order once we hear back from you.
+          We&apos;ll confirm sizing and delivery shortly. Limited runs — we hold your order once
+          payment comes through.
         </p>
+
+        <div className="w-full border border-bg-white/15 p-6 text-left">
+          <p className="mb-4 font-sans text-xs tracking-[0.25em] text-bg-white/50 uppercase">
+            Send payment to
+          </p>
+          <dl className="flex flex-col gap-3 font-sans text-sm">
+            <div className="flex items-baseline justify-between gap-4">
+              <dt className="text-bg-white/50">Bank</dt>
+              <dd className="text-bg-white">{BANK_NAME}</dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-4">
+              <dt className="text-bg-white/50">Account name</dt>
+              <dd className="text-bg-white">{BANK_ACCOUNT_HOLDER}</dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-4">
+              <dt className="text-bg-white/50">Account number</dt>
+              <dd className="flex items-center gap-2 text-bg-white">
+                {BANK_ACCOUNT_NUMBER}
+                <button
+                  type="button"
+                  onClick={copyAccountNumber}
+                  className="font-sans text-xs text-bg-white/50 underline underline-offset-4 hover:text-bg-white/80"
+                >
+                  {copied ? "Copied" : "Copy"}
+                </button>
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-4 border-t border-bg-white/10 pt-3">
+              <dt className="text-bg-white/50">Amount</dt>
+              <dd className="text-bg-white">{formatPrice(confirmedTotal)} + shipping (TBC)</dd>
+            </div>
+          </dl>
+          <p className="mt-4 font-sans text-xs leading-relaxed text-bg-white/40">
+            Once you&apos;ve transferred, send us the receipt on WhatsApp so we can confirm your
+            order.
+          </p>
+        </div>
+
         <Link
           href="/"
-          className="mt-4 font-sans text-sm uppercase tracking-wide text-bg-white underline underline-offset-4"
+          className="mt-2 font-sans text-sm uppercase tracking-wide text-bg-white underline underline-offset-4"
         >
           Back to THREADBOX
         </Link>
