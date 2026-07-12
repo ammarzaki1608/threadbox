@@ -8,6 +8,10 @@ interface OrderPayload {
   notes?: string;
   items: { name: string; size: string; qty: number }[];
   subtotal: number;
+  bankName?: string;
+  bankAccountHolder?: string;
+  bankAccountNumber?: string;
+  receiptWhatsapp?: string;
 }
 
 export async function POST(request: Request) {

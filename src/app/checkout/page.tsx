@@ -6,7 +6,6 @@ import { useCart } from "@/lib/cart-context";
 import { COLLECTIONS, getProductBySlug, formatPrice } from "@/lib/products";
 import {
   ORDER_WHATSAPP_NUMBER,
-  ORDER_EMAIL,
   BANK_NAME,
   BANK_ACCOUNT_NUMBER,
   BANK_ACCOUNT_HOLDER,
@@ -41,7 +40,7 @@ function buildOrderMessage(
     "",
     `Name: ${form.name}`,
     `Phone: ${form.phone}`,
-    form.email && `Email: ${form.email}`,
+    `Email: ${form.email}`,
     `Delivery address: ${form.address}`,
     form.notes && `Notes: ${form.notes}`,
   ].filter((line): line is string => Boolean(line));
@@ -49,33 +48,46 @@ function buildOrderMessage(
   return lines.join("\n");
 }
 
-/** Fire-and-forget: logs the order to the linked Google Sheet, if configured. Never blocks WhatsApp/email. */
-function submitOrderToSheet(
+/**
+ * Logs the order to the linked Google Sheet and (server-side) triggers an
+ * auto-email to the customer with payment instructions. Returns whether that
+ * succeeded so the caller can fall back to WhatsApp if it didn't.
+ */
+async function submitOrder(
   items: { slug: string; size: string; qty: number }[],
   subtotal: number,
   form: FormState
-) {
+): Promise<boolean> {
   const resolvedItems = items.map((i) => ({
     name: getProductBySlug(i.slug)?.name ?? i.slug,
     size: i.size,
     qty: i.qty,
   }));
 
-  fetch("/api/order", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name: form.name,
-      phone: form.phone,
-      email: form.email || undefined,
-      address: form.address,
-      notes: form.notes || undefined,
-      items: resolvedItems,
-      subtotal,
-    }),
-  }).catch(() => {
-    // Best-effort only — the customer's WhatsApp/email order still went through.
-  });
+  try {
+    const res = await fetch("/api/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        address: form.address,
+        notes: form.notes || undefined,
+        items: resolvedItems,
+        subtotal,
+        bankName: BANK_NAME,
+        bankAccountHolder: BANK_ACCOUNT_HOLDER,
+        bankAccountNumber: BANK_ACCOUNT_NUMBER,
+        receiptWhatsapp: ORDER_WHATSAPP_NUMBER,
+      }),
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data.ok === true;
+  } catch {
+    return false;
+  }
 }
 
 export default function CheckoutPage() {
@@ -88,102 +100,78 @@ export default function CheckoutPage() {
     notes: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, boolean>>>({});
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const [confirmedTotal, setConfirmedTotal] = useState(0);
-  const [copied, setCopied] = useState(false);
+  const [confirmedEmail, setConfirmedEmail] = useState("");
 
   const validate = () => {
     const nextErrors: Partial<Record<keyof FormState, boolean>> = {};
     if (!form.name.trim()) nextErrors.name = true;
     if (!form.phone.trim()) nextErrors.phone = true;
+    if (!form.email.trim()) nextErrors.email = true;
     if (!form.address.trim()) nextErrors.address = true;
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleWhatsApp = () => {
-    if (!validate()) return;
-    const message = buildOrderMessage(items, subtotal, form);
-    window.open(
-      `https://wa.me/${ORDER_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
-      "_blank"
-    );
-    submitOrderToSheet(items, subtotal, form);
+  const receiptMessage = (name: string) =>
+    `Hi THREADBOX, I've made payment for my order (${name}). Attaching my receipt.`;
+
+  const handlePlaceOrder = async () => {
+    if (!validate() || submitting) return;
+    setSubmitting(true);
+
+    const ok = await submitOrder(items, subtotal, form);
+
+    if (!ok) {
+      // Fallback so an order is never silently lost if the Sheet/email step fails.
+      const message = buildOrderMessage(items, subtotal, form);
+      window.open(
+        `https://wa.me/${ORDER_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
+        "_blank"
+      );
+    }
+
     setConfirmedTotal(subtotal);
+    setConfirmedEmail(form.email);
+    setEmailSent(ok);
     clear();
     setSubmitted(true);
-  };
-
-  const handleEmail = () => {
-    if (!validate()) return;
-    const message = buildOrderMessage(items, subtotal, form);
-    const subject = `THREADBOX order — ${form.name}`;
-    window.location.href = `mailto:${ORDER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-    submitOrderToSheet(items, subtotal, form);
-    setConfirmedTotal(subtotal);
-    clear();
-    setSubmitted(true);
-  };
-
-  const copyAccountNumber = () => {
-    navigator.clipboard
-      .writeText(BANK_ACCOUNT_NUMBER)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      })
-      .catch(() => {
-        // Clipboard permission denied/unavailable — the number is still shown on screen to copy manually.
-      });
+    setSubmitting(false);
   };
 
   if (submitted) {
     return (
       <main className="mx-auto flex max-w-xl flex-1 flex-col items-center justify-center gap-6 px-6 pt-28 pb-24 text-center sm:pt-32">
         <h1 className="font-display text-3xl uppercase text-bg-white sm:text-4xl">
-          Order sent
+          Order placed
         </h1>
-        <p className="font-sans text-sm leading-relaxed text-bg-white/60">
-          We&apos;ll confirm sizing and delivery shortly. Limited runs — we hold your order once
-          payment comes through.
-        </p>
+        {emailSent ? (
+          <p className="font-sans text-sm leading-relaxed text-bg-white/60">
+            We&apos;ve emailed payment instructions to <span className="text-bg-white">{confirmedEmail}</span>.
+            Total: {formatPrice(confirmedTotal)} + shipping (to be confirmed).
+          </p>
+        ) : (
+          <p className="font-sans text-sm leading-relaxed text-bg-white/60">
+            We&apos;ve sent your order to us on WhatsApp — we&apos;ll reply with payment
+            instructions shortly.
+          </p>
+        )}
 
-        <div className="w-full border border-bg-white/15 p-6 text-left">
-          <p className="mb-4 font-sans text-xs tracking-[0.25em] text-bg-white/50 uppercase">
-            Send payment to
-          </p>
-          <dl className="flex flex-col gap-3 font-sans text-sm">
-            <div className="flex items-baseline justify-between gap-4">
-              <dt className="text-bg-white/50">Bank</dt>
-              <dd className="text-bg-white">{BANK_NAME}</dd>
-            </div>
-            <div className="flex items-baseline justify-between gap-4">
-              <dt className="text-bg-white/50">Account name</dt>
-              <dd className="text-bg-white">{BANK_ACCOUNT_HOLDER}</dd>
-            </div>
-            <div className="flex items-baseline justify-between gap-4">
-              <dt className="text-bg-white/50">Account number</dt>
-              <dd className="flex items-center gap-2 text-bg-white">
-                {BANK_ACCOUNT_NUMBER}
-                <button
-                  type="button"
-                  onClick={copyAccountNumber}
-                  className="font-sans text-xs text-bg-white/50 underline underline-offset-4 hover:text-bg-white/80"
-                >
-                  {copied ? "Copied" : "Copy"}
-                </button>
-              </dd>
-            </div>
-            <div className="flex items-baseline justify-between gap-4 border-t border-bg-white/10 pt-3">
-              <dt className="text-bg-white/50">Amount</dt>
-              <dd className="text-bg-white">{formatPrice(confirmedTotal)} + shipping (TBC)</dd>
-            </div>
-          </dl>
-          <p className="mt-4 font-sans text-xs leading-relaxed text-bg-white/40">
-            Once you&apos;ve transferred, send us the receipt on WhatsApp so we can confirm your
-            order.
-          </p>
-        </div>
+        <a
+          href={`https://wa.me/${ORDER_WHATSAPP_NUMBER}?text=${encodeURIComponent(receiptMessage(form.name))}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full bg-bg-white px-6 py-4 text-center font-sans text-sm font-bold tracking-wide uppercase text-bg-black transition-opacity hover:opacity-90"
+        >
+          Paid? Send us your receipt on WhatsApp
+        </a>
+
+        <p className="font-sans text-xs leading-relaxed text-bg-white/40">
+          Limited runs — we hold your order once we receive your receipt.
+        </p>
 
         <Link
           href="/"
@@ -267,8 +255,8 @@ export default function CheckoutPage() {
             <span className="text-bg-white">{formatPrice(subtotal)}</span>
           </div>
           <p className="font-sans text-xs leading-relaxed text-bg-white/40">
-            No online payment. Submitting sends your order details straight to us — we&apos;ll
-            confirm final total (with shipping) and payment method with you directly.
+            No online payment. We&apos;ll email you payment instructions, then confirm final total
+            (with shipping) once we get your receipt.
           </p>
         </div>
 
@@ -301,12 +289,15 @@ export default function CheckoutPage() {
           </label>
 
           <label className="flex flex-col gap-1 font-sans text-sm">
-            Email (optional)
+            Email
             <input
               type="email"
               value={form.email}
               onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              className="border border-bg-white/25 bg-transparent px-3 py-2 text-bg-white outline-none focus:border-bg-white/60"
+              placeholder="We'll send payment instructions here"
+              className={`border bg-transparent px-3 py-2 text-bg-white outline-none ${
+                errors.email ? "border-merdeka-red" : "border-bg-white/25 focus:border-bg-white/60"
+              }`}
             />
           </label>
 
@@ -334,28 +325,20 @@ export default function CheckoutPage() {
             />
           </label>
 
-          {(errors.name || errors.phone || errors.address) && (
+          {(errors.name || errors.phone || errors.email || errors.address) && (
             <p className="font-sans text-xs text-merdeka-red">
-              Name, phone, and delivery address are required.
+              Name, phone, email, and delivery address are required.
             </p>
           )}
 
-          <div className="mt-2 flex flex-col gap-3">
-            <button
-              type="button"
-              onClick={handleWhatsApp}
-              className="w-full bg-bg-white px-6 py-4 font-sans text-sm font-bold tracking-wide uppercase text-bg-black transition-opacity hover:opacity-90"
-            >
-              Send order via WhatsApp
-            </button>
-            <button
-              type="button"
-              onClick={handleEmail}
-              className="w-full border border-bg-white/25 px-6 py-4 font-sans text-sm font-bold tracking-wide uppercase text-bg-white transition-colors hover:border-bg-white/60"
-            >
-              Or email us instead
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handlePlaceOrder}
+            disabled={submitting}
+            className="mt-2 w-full bg-bg-white px-6 py-4 font-sans text-sm font-bold tracking-wide uppercase text-bg-black transition-opacity hover:opacity-90 disabled:opacity-50"
+          >
+            {submitting ? "Placing order…" : "Place order"}
+          </button>
         </div>
       </div>
     </main>
