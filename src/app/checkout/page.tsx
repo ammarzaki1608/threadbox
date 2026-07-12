@@ -43,6 +43,35 @@ function buildOrderMessage(
   return lines.join("\n");
 }
 
+/** Fire-and-forget: logs the order to the linked Google Sheet, if configured. Never blocks WhatsApp/email. */
+function submitOrderToSheet(
+  items: { slug: string; size: string; qty: number }[],
+  subtotal: number,
+  form: FormState
+) {
+  const resolvedItems = items.map((i) => ({
+    name: getProductBySlug(i.slug)?.name ?? i.slug,
+    size: i.size,
+    qty: i.qty,
+  }));
+
+  fetch("/api/order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: form.name,
+      phone: form.phone,
+      email: form.email || undefined,
+      address: form.address,
+      notes: form.notes || undefined,
+      items: resolvedItems,
+      subtotal,
+    }),
+  }).catch(() => {
+    // Best-effort only — the customer's WhatsApp/email order still went through.
+  });
+}
+
 export default function CheckoutPage() {
   const { items, subtotal, clear } = useCart();
   const [form, setForm] = useState<FormState>({
@@ -71,6 +100,7 @@ export default function CheckoutPage() {
       `https://wa.me/${ORDER_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
       "_blank"
     );
+    submitOrderToSheet(items, subtotal, form);
     clear();
     setSubmitted(true);
   };
@@ -80,6 +110,7 @@ export default function CheckoutPage() {
     const message = buildOrderMessage(items, subtotal, form);
     const subject = `THREADBOX order — ${form.name}`;
     window.location.href = `mailto:${ORDER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+    submitOrderToSheet(items, subtotal, form);
     clear();
     setSubmitted(true);
   };
