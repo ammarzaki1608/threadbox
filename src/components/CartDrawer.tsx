@@ -3,7 +3,9 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
-import { getProductBySlug, formatPrice } from "@/lib/products";
+import { COLLECTIONS, getProductBySlug, formatPrice } from "@/lib/products";
+import ProductVisual from "./ProductVisual";
+import { watermarkForProduct } from "./watermarks";
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, updateQty, removeItem, count, subtotal } = useCart();
@@ -64,12 +66,22 @@ export default function CartDrawer() {
               {items.map((item) => {
                 const product = getProductBySlug(item.slug);
                 if (!product) return null;
+                const collection = COLLECTIONS[product.collection];
                 return (
                   <li
                     key={`${item.slug}-${item.size}`}
                     className="flex gap-4 border-b border-bg-white/10 py-5 first:pt-0"
                   >
-                    <div className="h-20 w-16 shrink-0 border border-bg-white/15 bg-bg-white/5" />
+                    <div
+                      className={`relative h-20 w-16 shrink-0 overflow-hidden border ${collection.accentBorder}/40 bg-bg-black`}
+                    >
+                      <ProductVisual
+                        product={product}
+                        wash={collection.wash}
+                        accentText={collection.priceAccent}
+                        watermark={watermarkForProduct(product.collection, product.variant)}
+                      />
+                    </div>
                     <div className="flex flex-1 flex-col gap-1">
                       <div className="flex items-baseline justify-between gap-2">
                         <Link

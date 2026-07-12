@@ -6,6 +6,7 @@ import Wordmark from "./Wordmark";
 import { useCart } from "@/lib/cart-context";
 
 const LINKS = [
+  { label: "Shop", href: "/shop" },
   { label: "Merdeka", href: "/#merdeka" },
   { label: "Penang", href: "/#penang" },
   { label: "Balik Pulau", href: "/#balik-pulau" },

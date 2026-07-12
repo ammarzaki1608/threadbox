@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
-import { getProductBySlug, formatPrice } from "@/lib/products";
+import { COLLECTIONS, getProductBySlug, formatPrice } from "@/lib/products";
 import { ORDER_WHATSAPP_NUMBER, ORDER_EMAIL } from "@/lib/config";
+import ProductVisual from "@/components/ProductVisual";
+import { watermarkForProduct } from "@/components/watermarks";
 
 interface FormState {
   name: string;
@@ -124,28 +126,52 @@ export default function CheckoutPage() {
       <h1 className="font-display text-4xl uppercase text-bg-white sm:text-5xl">Checkout</h1>
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 border border-bg-white/15 p-6">
           <h2 className="font-sans text-xs tracking-[0.25em] text-bg-white/50 uppercase">
-            Order summary
+            Your order ({items.reduce((sum, i) => sum + i.qty, 0)})
           </h2>
-          <ul className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-5">
             {items.map((item) => {
               const product = getProductBySlug(item.slug);
               if (!product) return null;
+              const collection = COLLECTIONS[product.collection];
               return (
                 <li
                   key={`${item.slug}-${item.size}`}
-                  className="flex items-baseline justify-between gap-4 border-b border-bg-white/10 pb-4 font-sans text-sm"
+                  className="flex gap-4 border-b border-bg-white/10 pb-5 last:border-b-0 last:pb-0"
                 >
-                  <span className="text-bg-white/80">
-                    {product.name} · Size {item.size} · x{item.qty}
-                  </span>
-                  <span className="text-bg-white">{formatPrice(product.price * item.qty)}</span>
+                  <div
+                    className={`relative h-20 w-16 shrink-0 overflow-hidden border ${collection.accentBorder}/40 bg-bg-black`}
+                  >
+                    <ProductVisual
+                      product={product}
+                      wash={collection.wash}
+                      accentText={collection.priceAccent}
+                      watermark={watermarkForProduct(product.collection, product.variant)}
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col gap-1 font-sans text-sm">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="text-bg-white">{product.name}</span>
+                      <Link
+                        href={`/product/${product.slug}`}
+                        className="text-xs text-bg-white/50 underline underline-offset-4 hover:text-bg-white/80"
+                      >
+                        Change
+                      </Link>
+                    </div>
+                    <p className="text-xs text-bg-white/50 uppercase tracking-wide">
+                      Size {item.size} · x{item.qty}
+                    </p>
+                    <p className="mt-1 text-bg-white/80">
+                      {formatPrice(product.price * item.qty)}
+                    </p>
+                  </div>
                 </li>
               );
             })}
           </ul>
-          <div className="flex items-baseline justify-between pt-2 font-sans text-base">
+          <div className="flex items-baseline justify-between border-t border-bg-white/10 pt-4 font-sans text-base">
             <span className="text-bg-white/60 uppercase tracking-wide">Subtotal</span>
             <span className="text-bg-white">{formatPrice(subtotal)}</span>
           </div>
