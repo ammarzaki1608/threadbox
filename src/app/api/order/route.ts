@@ -8,6 +8,8 @@ interface OrderPayload {
   notes?: string;
   items: { name: string; size: string; qty: number }[];
   subtotal: number;
+  shipping?: number;
+  total?: number;
   bankName?: string;
   bankAccountHolder?: string;
   bankAccountNumber?: string;

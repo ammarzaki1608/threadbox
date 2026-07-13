@@ -7,3 +7,6 @@ export const ORDER_EMAIL = "thrdbox@gmail.com";
 export const BANK_NAME = "Aeon Bank";
 export const BANK_ACCOUNT_NUMBER = "9988188099665";
 export const BANK_ACCOUNT_HOLDER = "Muhammad Zafarul Amir Bin Zaidi";
+
+// Flat shipping fee (RM), added to every order regardless of size.
+export const SHIPPING_FEE = 10;

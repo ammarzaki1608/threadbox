@@ -9,6 +9,7 @@ import {
   BANK_NAME,
   BANK_ACCOUNT_NUMBER,
   BANK_ACCOUNT_HOLDER,
+  SHIPPING_FEE,
 } from "@/lib/config";
 import ProductVisual from "@/components/ProductVisual";
 import { watermarkForProduct } from "@/components/watermarks";
@@ -46,6 +47,8 @@ function buildOrderMessage(
     }),
     "",
     `Subtotal: ${formatPrice(subtotal)}`,
+    `Shipping: ${formatPrice(SHIPPING_FEE)}`,
+    `Total: ${formatPrice(subtotal + SHIPPING_FEE)}`,
     "",
     `Name: ${form.name}`,
     `Phone: ${form.phone}`,
@@ -85,6 +88,8 @@ async function submitOrder(
         notes: form.notes || undefined,
         items: resolvedItems,
         subtotal,
+        shipping: SHIPPING_FEE,
+        total: subtotal + SHIPPING_FEE,
         bankName: BANK_NAME,
         bankAccountHolder: BANK_ACCOUNT_HOLDER,
         bankAccountNumber: BANK_ACCOUNT_NUMBER,
@@ -143,7 +148,7 @@ export default function CheckoutPage() {
       );
     }
 
-    setConfirmedTotal(subtotal);
+    setConfirmedTotal(subtotal + SHIPPING_FEE);
     setConfirmedEmail(form.email);
     setEmailSent(ok);
     clear();
@@ -160,9 +165,9 @@ export default function CheckoutPage() {
         {emailSent ? (
           <p className="font-sans text-sm leading-relaxed text-bg-white/60">
             We&apos;ve emailed payment instructions to <span className="text-bg-white">{confirmedEmail}</span>.
-            Total: {formatPrice(confirmedTotal)} + shipping (to be confirmed). Don&apos;t see it?
-            Check your spam/junk folder and mark it as &quot;Not spam&quot; so future emails land
-            properly.
+            Total: {formatPrice(confirmedTotal)} (incl. {formatPrice(SHIPPING_FEE)} shipping).
+            Don&apos;t see it? Check your spam/junk folder and mark it as &quot;Not spam&quot; so
+            future emails land properly.
           </p>
         ) : (
           <p className="font-sans text-sm leading-relaxed text-bg-white/60">
@@ -262,13 +267,23 @@ export default function CheckoutPage() {
               );
             })}
           </ul>
-          <div className="flex items-baseline justify-between border-t border-bg-white/10 pt-4 font-sans text-base">
-            <span className="text-bg-white/60 uppercase tracking-wide">Subtotal</span>
-            <span className="text-bg-white">{formatPrice(subtotal)}</span>
+          <div className="flex flex-col gap-2 border-t border-bg-white/10 pt-4 font-sans text-sm">
+            <div className="flex items-baseline justify-between">
+              <span className="text-bg-white/60 uppercase tracking-wide">Subtotal</span>
+              <span className="text-bg-white">{formatPrice(subtotal)}</span>
+            </div>
+            <div className="flex items-baseline justify-between">
+              <span className="text-bg-white/60 uppercase tracking-wide">Shipping</span>
+              <span className="text-bg-white">{formatPrice(SHIPPING_FEE)}</span>
+            </div>
+            <div className="flex items-baseline justify-between border-t border-bg-white/10 pt-2 text-base">
+              <span className="text-bg-white/60 uppercase tracking-wide">Total</span>
+              <span className="text-bg-white">{formatPrice(subtotal + SHIPPING_FEE)}</span>
+            </div>
           </div>
           <p className="font-sans text-xs leading-relaxed text-bg-white/40">
-            No online payment. We&apos;ll email you payment instructions, then confirm final total
-            (with shipping) once we get your receipt.
+            No online payment. We&apos;ll email you payment instructions with the total above, then
+            confirm once we get your receipt.
           </p>
         </div>
 
