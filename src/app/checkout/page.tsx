@@ -151,7 +151,9 @@ export default function CheckoutPage() {
         {emailSent ? (
           <p className="font-sans text-sm leading-relaxed text-bg-white/60">
             We&apos;ve emailed payment instructions to <span className="text-bg-white">{confirmedEmail}</span>.
-            Total: {formatPrice(confirmedTotal)} + shipping (to be confirmed).
+            Total: {formatPrice(confirmedTotal)} + shipping (to be confirmed). Don&apos;t see it?
+            Check your spam/junk folder and mark it as &quot;Not spam&quot; so future emails land
+            properly.
           </p>
         ) : (
           <p className="font-sans text-sm leading-relaxed text-bg-white/60">
