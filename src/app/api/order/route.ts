@@ -17,7 +17,7 @@ interface OrderPayload {
 /** Fetches the QR payment image from this same deployment (works in both local dev and prod). */
 async function getQrImageBase64(request: Request): Promise<string | undefined> {
   try {
-    const qrUrl = new URL("/payment-qr.png", request.url).toString();
+    const qrUrl = new URL("/payment-qr.jpeg", request.url).toString();
     const res = await fetch(qrUrl);
     if (!res.ok) return undefined;
     const buffer = await res.arrayBuffer();
