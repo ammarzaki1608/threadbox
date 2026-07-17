@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
 import type { ProductData } from "@/lib/products";
+import ProductPhoto from "./ProductPhoto";
 
 /**
  * The variant-specific graphic (poster wash / stacked-type / collage-badge).
  * Caller supplies the sized, positioned container — this only renders the fill content.
+ * Falls back to the CSS placeholder system for products without real photography yet.
  */
 export default function ProductVisual({
   product,
@@ -17,6 +19,10 @@ export default function ProductVisual({
   accentText: string;
   watermark?: ReactNode;
 }) {
+  if (product.hasPhotography) {
+    return <ProductPhoto slug={product.slug} view="back" alt={`${product.name} — back print`} />;
+  }
+
   return (
     <>
       {product.variant === "poster" && (

@@ -32,6 +32,15 @@ export interface ProductData {
   jerseyNumber?: string;
   /** Small caps caption above the graphic — event name for hype-tee treatments. */
   eyebrow?: string;
+  /** True once real front/back photography exists at /assets/{slug}-front.jpg and -back.jpg. */
+  hasPhotography?: boolean;
+  /** Studio backdrop color of the photography, so the card background can match (avoids a letterbox clash). */
+  photoBg?: "white" | "black";
+}
+
+/** Literal Tailwind bg class for a product's photo backdrop, falling back to the site's own black. */
+export function photoBgClass(product: ProductData): string {
+  return product.photoBg === "black" ? "bg-bg-black" : "bg-bg-white";
 }
 
 const SIZES = ["S", "M", "L", "XL"];
@@ -96,6 +105,8 @@ export const PRODUCTS: ProductData[] = [
     collection: "malaysia",
     variant: "poster",
     sizes: SIZES,
+    hasPhotography: true,
+    photoBg: "white",
   },
   {
     slug: "penang-city-heritage",
@@ -105,6 +116,8 @@ export const PRODUCTS: ProductData[] = [
     collection: "penang",
     variant: "poster",
     sizes: SIZES,
+    hasPhotography: true,
+    photoBg: "white",
   },
   {
     slug: "shabab-super-cup",
@@ -116,6 +129,8 @@ export const PRODUCTS: ProductData[] = [
     jerseyNumber: "07",
     eyebrow: "Super Cup — District Tournament",
     sizes: SIZES,
+    hasPhotography: true,
+    photoBg: "black",
   },
   {
     slug: "lights-out",
@@ -126,6 +141,8 @@ export const PRODUCTS: ProductData[] = [
     variant: "stacked-type",
     stackedLines: ["LIGHTS", "OUT"],
     sizes: SIZES,
+    hasPhotography: true,
+    photoBg: "white",
   },
 ];
 

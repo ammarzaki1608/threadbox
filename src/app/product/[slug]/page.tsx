@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { COLLECTIONS, PRODUCTS, formatPrice, getProductBySlug } from "@/lib/products";
 import { GOOGLE_FORM_ORDER_LINK } from "@/lib/config";
-import ProductVisual from "@/components/ProductVisual";
+import ProductGallery from "@/components/ProductGallery";
 import { watermarkForProduct } from "@/components/watermarks";
 
 export function generateStaticParams() {
@@ -37,16 +37,13 @@ export default async function ProductPage(props: PageProps<"/product/[slug]">) {
       </Link>
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-        <div
-          className={`relative aspect-4/5 w-full overflow-hidden border ${collection.accentBorder}/40 bg-bg-black`}
-        >
-          <ProductVisual
-            product={product}
-            wash={collection.wash}
-            accentText={collection.priceAccent}
-            watermark={watermarkForProduct(product.collection, product.variant)}
-          />
-        </div>
+        <ProductGallery
+          product={product}
+          accentBorder={collection.accentBorder}
+          wash={collection.wash}
+          accentText={collection.priceAccent}
+          watermark={watermarkForProduct(product.collection, product.variant)}
+        />
 
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">

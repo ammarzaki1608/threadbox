@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
-import { COLLECTIONS, getProductBySlug, formatPrice } from "@/lib/products";
+import { COLLECTIONS, getProductBySlug, formatPrice, photoBgClass } from "@/lib/products";
 import ProductVisual from "./ProductVisual";
 import { watermarkForProduct } from "./watermarks";
 
@@ -73,7 +73,9 @@ export default function CartDrawer() {
                     className="flex gap-4 border-b border-bg-white/10 py-5 first:pt-0"
                   >
                     <div
-                      className={`relative h-20 w-16 shrink-0 overflow-hidden border ${collection.accentBorder}/40 bg-bg-black`}
+                      className={`relative h-20 w-16 shrink-0 overflow-hidden border ${collection.accentBorder}/40 ${
+                        product.hasPhotography ? photoBgClass(product) : "bg-bg-black"
+                      }`}
                     >
                       <ProductVisual
                         product={product}

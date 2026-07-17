@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import type { ProductData } from "@/lib/products";
-import { formatPrice } from "@/lib/products";
+import { formatPrice, photoBgClass } from "@/lib/products";
 import ProductVisual from "./ProductVisual";
 
 export default function ProductCard({
@@ -22,7 +22,9 @@ export default function ProductCard({
   return (
     <Link href={`/product/${product.slug}`} className="group flex flex-col gap-4">
       <div
-        className={`relative aspect-4/5 overflow-hidden border ${cardBorderClasses} bg-bg-black transition-colors`}
+        className={`relative aspect-4/5 overflow-hidden border ${cardBorderClasses} ${
+          product.hasPhotography ? photoBgClass(product) : "bg-bg-black"
+        } transition-colors`}
       >
         <ProductVisual product={product} wash={wash} accentText={accentText} watermark={watermark} />
       </div>

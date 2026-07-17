@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import type { CollectionData, ProductData } from "@/lib/products";
-import { formatPrice } from "@/lib/products";
+import { formatPrice, photoBgClass } from "@/lib/products";
 import ProductVisual from "./ProductVisual";
 
 /**
@@ -42,7 +42,9 @@ export default function CollectionFeature({
 
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           <div
-            className={`relative aspect-4/5 w-full overflow-hidden border ${collection.accentBorder}/40 bg-bg-black`}
+            className={`relative aspect-4/5 w-full overflow-hidden border ${collection.accentBorder}/40 ${
+              product.hasPhotography ? photoBgClass(product) : "bg-bg-black"
+            }`}
           >
             <ProductVisual
               product={product}

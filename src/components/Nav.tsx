@@ -13,15 +13,7 @@ const LINKS = [
 ];
 
 export default function Nav() {
-  const [solid, setSolid] = useState(false);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > 64);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -33,11 +25,7 @@ export default function Nav() {
   }, [open]);
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        solid || open ? "bg-bg-black/95 backdrop-blur-sm" : "bg-transparent"
-      }`}
-    >
+    <header className="fixed inset-x-0 top-0 z-50 bg-bg-black/95 backdrop-blur-sm">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 text-bg-white">
         <Link href="/" className="text-xl" onClick={() => setOpen(false)}>
           <Wordmark />

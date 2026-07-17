@@ -2,26 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Wordmark from "./Wordmark";
-import { getFlagshipProduct, formatPrice } from "@/lib/products";
-
-/** Moon + star — the one national motif the Brand Bible clears for broad use. */
-function MoonStar({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 120 120" className={className} aria-hidden="true">
-      <path
-        d="M66 20a42 42 0 1 0 34 46 34 34 0 0 1-34-46Z"
-        fill="currentColor"
-      />
-      <path
-        d="M92 24l3.4 8.6L104 36l-8.6 3.4L92 48l-3.4-8.6L80 36l8.6-3.4L92 24Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
+import { getFlagshipProduct, formatPrice, photoBgClass } from "@/lib/products";
+import ProductPhoto from "./ProductPhoto";
 
 const product = getFlagshipProduct("malaysia");
+const faceBg = photoBgClass(product);
 
 export default function HeroMalaysia() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -79,7 +64,7 @@ export default function HeroMalaysia() {
     >
       <div
         id="top"
-        className="sticky top-0 h-screen overflow-hidden bg-bg-black"
+        className={`sticky top-0 h-screen overflow-hidden ${faceBg}`}
         style={{ perspective: "1600px" }}
       >
         <div
@@ -90,63 +75,49 @@ export default function HeroMalaysia() {
             transition: reducedMotion ? "none" : "transform 60ms linear",
           }}
         >
-          {/* FRONT — quiet, monochrome, chest-logo scale (mirrors real garment front) */}
+          {/* FRONT — the real garment front, small chest logo */}
           <div
-            className="absolute inset-0 flex flex-col items-center justify-center gap-6 bg-bg-black"
+            className={`absolute inset-0 flex flex-col items-center justify-center gap-6 ${faceBg}`}
             style={{ backfaceVisibility: "hidden" }}
           >
-            <Wordmark className="text-4xl text-bg-white sm:text-6xl" />
-            <p className="font-sans text-xs tracking-[0.3em] text-bg-white/50 uppercase">
+            <div className="relative aspect-[735/588] w-[85vw] max-w-md">
+              <ProductPhoto slug={product.slug} view="front" alt={`${product.name} — front`} priority />
+            </div>
+            <p className="font-sans text-xs tracking-[0.3em] text-bg-black/50 uppercase">
               Scroll to turn the shirt around
             </p>
           </div>
 
-          {/* BACK — the poster. Full-bleed back-print placeholder + title lockup. */}
+          {/* BACK — the poster. The photo carries the design; text here is caption-scale, not a duplicate headline. */}
           <div
-            className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
+            className={`absolute inset-0 flex flex-col items-center justify-center overflow-hidden ${faceBg}`}
             style={{
               backfaceVisibility: "hidden",
               transform: "rotateY(180deg)",
-              background:
-                "radial-gradient(circle at 50% 30%, var(--merdeka-navy) 0%, var(--bg-black) 70%)",
             }}
           >
             <div
-              className="pointer-events-none absolute inset-0 opacity-20"
-              style={{
-                backgroundImage:
-                  "repeating-radial-gradient(circle at 0 0, transparent 0, transparent 2px, rgba(240,230,210,0.4) 2.5px)",
-                backgroundSize: "6px 6px",
-              }}
-            />
-
-            <div
-              className="relative flex flex-col items-center gap-8 px-6 text-center"
+              className="relative flex flex-col items-center gap-6 px-6 text-center"
               style={{ opacity: backOpacity, pointerEvents: backOpacity > 0.5 ? "auto" : "none" }}
             >
-              <MoonStar className="h-20 w-20 text-merdeka-gold sm:h-28 sm:w-28" />
-              <div className="flex flex-col items-center gap-3">
-                <p className="font-sans text-xs tracking-[0.35em] text-merdeka-cream/70 uppercase">
+              <div className="relative aspect-[735/588] w-[85vw] max-w-md">
+                <ProductPhoto slug={product.slug} view="back" alt={`${product.name} — back print`} />
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <p className="font-sans text-xs tracking-[0.3em] text-merdeka-red uppercase">
                   Tier 0 — Malaysia
                 </p>
-                <h1 className="font-display text-6xl leading-none text-bg-white uppercase sm:text-8xl md:text-9xl">
-                  Merdeka
+                <h1 className="font-display text-2xl uppercase text-ink sm:text-3xl">
+                  {product.name}
                 </h1>
-                <p className="font-sans text-sm tracking-widest text-merdeka-cream/80 uppercase">
-                  Tanah Tumpah Darahku
-                </p>
               </div>
               <Link
                 href={`/product/${product.slug}`}
-                className="border border-bg-white/40 px-5 py-2 font-sans text-xs tracking-[0.2em] text-bg-white uppercase transition-colors hover:bg-bg-white/10"
+                className="bg-bg-black px-5 py-2 font-sans text-xs tracking-[0.2em] text-bg-white uppercase transition-opacity hover:opacity-80"
               >
                 Shop this piece — {formatPrice(product.price)}
               </Link>
             </div>
-
-            <span className="absolute bottom-4 left-4 font-mono text-[10px] tracking-wide text-bg-white/25">
-              REPLACE: /assets/{product.slug}.jpg
-            </span>
           </div>
         </div>
 
@@ -154,7 +125,7 @@ export default function HeroMalaysia() {
           className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center transition-opacity duration-300"
           style={{ opacity: reducedMotion ? 0 : Math.max(0, 1 - progress * 4) }}
         >
-          <span className="font-sans text-[10px] tracking-[0.3em] text-bg-white/40 uppercase">
+          <span className="font-sans text-[10px] tracking-[0.3em] text-bg-black/40 uppercase">
             Scroll
           </span>
         </div>
