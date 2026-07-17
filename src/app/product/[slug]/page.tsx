@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { COLLECTIONS, PRODUCTS, formatPrice, getProductBySlug } from "@/lib/products";
+import { GOOGLE_FORM_ORDER_LINK } from "@/lib/config";
 import ProductVisual from "@/components/ProductVisual";
-import AddToCartForm from "@/components/AddToCartForm";
 import { watermarkForProduct } from "@/components/watermarks";
 
 export function generateStaticParams() {
@@ -65,7 +65,14 @@ export default async function ProductPage(props: PageProps<"/product/[slug]">) {
             {product.blurb}
           </p>
 
-          <AddToCartForm product={product} accentBorder={collection.accentBorder} />
+          <a
+            href={GOOGLE_FORM_ORDER_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-fit bg-bg-white px-6 py-4 font-sans text-sm font-bold tracking-wide uppercase text-bg-black transition-opacity hover:opacity-90"
+          >
+            Order via Google Form
+          </a>
         </div>
       </div>
     </main>

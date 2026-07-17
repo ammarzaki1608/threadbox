@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Wordmark from "./Wordmark";
-import { useCart } from "@/lib/cart-context";
 
 const LINKS = [
   { label: "Shop", href: "/shop" },
@@ -16,7 +15,6 @@ const LINKS = [
 export default function Nav() {
   const [solid, setSolid] = useState(false);
   const [open, setOpen] = useState(false);
-  const { count, openCart } = useCart();
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 64);
@@ -54,13 +52,6 @@ export default function Nav() {
           ))}
         </ul>
         <div className="flex items-center gap-6">
-          <button
-            type="button"
-            onClick={openCart}
-            className="font-sans text-sm tracking-wide uppercase opacity-80 transition-opacity hover:opacity-100"
-          >
-            Cart ({count})
-          </button>
           <button
             type="button"
             aria-label={open ? "Close menu" : "Open menu"}

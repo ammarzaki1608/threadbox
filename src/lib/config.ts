@@ -10,3 +10,8 @@ export const BANK_ACCOUNT_HOLDER = "Muhammad Zafarul Amir Bin Zaidi";
 
 // Flat shipping fee (RM), added to every order regardless of size.
 export const SHIPPING_FEE = 10;
+
+// Site is currently a landing page — orders go through this Google Form
+// instead of the in-site cart/checkout flow.
+export const GOOGLE_FORM_ORDER_LINK =
+  "https://docs.google.com/forms/d/e/1FAIpQLSdAVmCzTgaIVbSrK3KZ33gVCVAwQHirDI2guuT9EmW38ztbAw/viewform?pli=1";
