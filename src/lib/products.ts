@@ -100,7 +100,7 @@ export const PRODUCTS: ProductData[] = [
   {
     slug: "tanah-tumpah-darahku",
     name: "Tanah Tumpah Darahku",
-    blurb: "Duotone teal and cream — a flag-raiser at the clock tower, a crowd cheering below. Merdeka Square, the moment it actually happened.",
+    blurb: "Stitched sovereignty, historic shadows, zero compromise — it's a nation's pulse, not a postcard.",
     price: 60,
     collection: "malaysia",
     variant: "poster",
@@ -111,7 +111,7 @@ export const PRODUCTS: ProductData[] = [
   {
     slug: "penang-city-heritage",
     name: "Penang City Heritage",
-    blurb: "Kek Lok Si, the bridge, Lebuh Armenian, a trishaw, the ferry — Penang stacked into six letters. If it's not in the skyline, it's not on the shirt.",
+    blurb: "Street-side trade, century-old storefronts, weathered concrete — the living pulse of George Town, captured in thread.",
     price: 60,
     collection: "penang",
     variant: "poster",
@@ -122,7 +122,7 @@ export const PRODUCTS: ProductData[] = [
   {
     slug: "shabab-super-cup",
     name: "Shabab Super Cup",
-    blurb: "Durian, the road sign into town, a kampung house, and the number nine putting one away. Shabab Super Cup, collaged the way it actually felt pitchside.",
+    blurb: "Heavy illustration, raw passion, unyielding local pride — the official uniform of the Shabab Super Cup. Wear the tournament heartbeat.",
     price: 60,
     collection: "balik-pulau",
     variant: "collage",
@@ -135,7 +135,7 @@ export const PRODUCTS: ProductData[] = [
   {
     slug: "lights-out",
     name: "Born and Raised",
-    blurb: "Radio, nasi lemak, the songkok you never gave back, the shared telephone — nine small things every hostel kid remembers. Born and raised, not just enrolled.",
+    blurb: "Iron-frame desks, instant noodles on repeat, and the radio playing in the background of a last-minute cram session. The raw anatomy of hostel survival.",
     price: 60,
     collection: "hostel",
     variant: "stacked-type",
