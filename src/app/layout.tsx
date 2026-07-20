@@ -19,7 +19,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "THREADBOX — Malaysian Streetwear, Told Through Place",
   description:
-    "Limited-run streetwear organized by geography — Malaysia, state, district, landmark, culture, food, festival. Currently dropping: Malaysia (Merdeka), Penang, Balik Pulau, and Hostel.",
+    "Malaysian streetwear organized by geography — Malaysia, state, district, landmark, culture, food, festival. Currently dropping: Malaysia (Merdeka), Penang, Balik Pulau, and Hostel.",
 };
 
 export default function RootLayout({

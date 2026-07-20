@@ -37,7 +37,7 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col gap-4 border-t border-bg-white/10 pt-8 font-sans text-xs text-bg-white/40 sm:flex-row sm:items-center sm:justify-between">
-          <p>&copy; {new Date().getFullYear()} THREADBOX. Limited runs, gone when it&apos;s gone.</p>
+          <p>&copy; {new Date().getFullYear()} THREADBOX. Malaysia, told through place.</p>
           <div className="flex gap-6 uppercase tracking-wide">
             <a href="#shipping" className="transition-colors hover:text-bg-white/70">
               Shipping
